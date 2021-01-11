@@ -268,9 +268,9 @@ def TrainDataSentiment():
 
     return clf
 
-@app.route('/', methods=['GET'])
+@app.route('/')
 def index():
-    return "Connect"
+     return "<h1>Connect</h1>"
 
 @app.route('/sentcomment', methods=['POST'])
 def sentcomment():
