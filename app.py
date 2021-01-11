@@ -21,6 +21,28 @@ from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+    path_nag = 'sentiment_dicts/nag.txt'
+    path_pos = 'sentiment_dicts/pos.txt'
+    path_not = 'sentiment_dicts/not.txt'
+
+    VN_CHARS_LOWER = u'ạảãàáâậầấẩẫăắằặẳẵóòọõỏôộổỗồốơờớợởỡéèẻẹẽêếềệểễúùụủũưựữửừứíìịỉĩýỳỷỵỹđð'
+    VN_CHARS_UPPER = u'ẠẢÃÀÁÂẬẦẤẨẪĂẮẰẶẲẴÓÒỌÕỎÔỘỔỖỒỐƠỜỚỢỞỠÉÈẺẸẼÊẾỀỆỂỄÚÙỤỦŨƯỰỮỬỪỨÍÌỊỈĨÝỲỶỴỸÐĐ'
+    VN_CHARS = VN_CHARS_LOWER + VN_CHARS_UPPER
+
+    
+    with codecs.open(path_nag, 'r',  encoding="utf8") as f:
+        nag = f.readlines()
+    nag_list = [n.replace('\n', '') for n in nag]
+
+    with codecs.open(path_pos, 'r',  encoding="utf8") as f:
+        pos = f.readlines()
+    pos_list = [n.replace('\n', '') for n in pos]
+
+    with codecs.open(path_not, 'r',  encoding="utf8") as f:
+        not_ = f.readlines()
+    not_list = [n.replace('\n', '') for n in not_]
+
+
 class DataSource(object):
     def _load_raw_data(self, filename, is_train=True):
         a = []
@@ -94,8 +116,6 @@ def no_marks(s):
     return result
 
 def normalize_text(text):
-    
-
     #Remove các ký tự kéo dài: vd: đẹppppppp
     text = re.sub(r'([A-Z])\1+', lambda m: m.group(1).upper(), text, flags=re.IGNORECASE)
 
@@ -203,6 +223,8 @@ def normalize_text(text):
     return text
 
 def TrainDataSentiment():
+
+
     ds = DataSource()
     train_data = pd.DataFrame(ds.load_data('data_clean/train.crash'))
     new_data = []
@@ -293,25 +315,7 @@ def sentcomment():
 if __name__ == '__main__':
     app.debug = True
 
-    path_nag = 'sentiment_dicts/nag.txt'
-    path_pos = 'sentiment_dicts/pos.txt'
-    path_not = 'sentiment_dicts/not.txt'
-
-    VN_CHARS_LOWER = u'ạảãàáâậầấẩẫăắằặẳẵóòọõỏôộổỗồốơờớợởỡéèẻẹẽêếềệểễúùụủũưựữửừứíìịỉĩýỳỷỵỹđð'
-    VN_CHARS_UPPER = u'ẠẢÃÀÁÂẬẦẤẨẪĂẮẰẶẲẴÓÒỌÕỎÔỘỔỖỒỐƠỜỚỢỞỠÉÈẺẸẼÊẾỀỆỂỄÚÙỤỦŨƯỰỮỬỪỨÍÌỊỈĨÝỲỶỴỸÐĐ'
-    VN_CHARS = VN_CHARS_LOWER + VN_CHARS_UPPER
-
-    
-    with codecs.open(path_nag, 'r',  encoding="utf8") as f:
-        nag = f.readlines()
-    nag_list = [n.replace('\n', '') for n in nag]
-
-    with codecs.open(path_pos, 'r',  encoding="utf8") as f:
-        pos = f.readlines()
-    pos_list = [n.replace('\n', '') for n in pos]
-    with codecs.open(path_not, 'r',  encoding="utf8") as f:
-        not_ = f.readlines()
-    not_list = [n.replace('\n', '') for n in not_]
+   
 
     clfSentiment = TrainDataSentiment()
     app.run()
